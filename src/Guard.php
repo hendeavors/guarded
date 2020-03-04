@@ -4,6 +4,8 @@ namespace Endeavors\Guarded;
 
 use Endeavors\Guarded\GuardInterface;
 use Endeavors\Guarded\GuardExtension;
+use Throwable;
+use InvalidArgumentException;
 
 class Guard implements GuardInterface
 {
@@ -21,6 +23,15 @@ class Guard implements GuardInterface
 
     public function __call($method, $args)
     {
-        GuardExtension::$method(...$args);
+        try {
+            GuardExtension::$method(...$args);
+        } catch (Throwable $e) {
+            // Call to undefined method
+            if (false === strpos($e->getMessage(), "Call to undefined method")) {
+                throw $e;
+            }
+
+            throw new \BadMethodCallException($e->getMessage());
+        }
     }
 }

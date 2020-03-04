@@ -5,6 +5,7 @@ namespace Endeavors\Guarded;
 use PHPUnit\Framework\TestCase;
 use Endeavors\Guarded\Guard;
 use InvalidArgumentException;
+use BadMethodCallException;
 
 class GuardTest extends TestCase
 {
@@ -95,6 +96,18 @@ class GuardTest extends TestCase
     /**
      * @test
      */
+    public function guardsZero()
+    {
+        $value = 0;
+
+        $this->expectException(InvalidArgumentException::class);
+
+        Guard::against()->zero($value, 'value');
+    }
+
+    /**
+     * @test
+     */
     public function guardsWhiteSpaceOrEmptyAlias()
     {
         $value = "";
@@ -109,6 +122,8 @@ class GuardTest extends TestCase
      */
     public function badMethodCall()
     {
-        Guard::against()->fooBarBaz('foo', 'barbaz');    
+        $this->expectException(BadMethodCallException::class);
+
+        Guard::against()->fooBarBaz('foo', 'barbaz');
     }
 }
